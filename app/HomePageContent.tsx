@@ -1,6 +1,7 @@
 'use client';
 
 import { useSnapshot } from 'valtio';
+import { DeductiveExpensesCard } from '~/components/DeductiveExpensesCard';
 import { IncomeDetailsCard } from '~/components/IncomeDetailsCard';
 import { InputCard } from '~/components/InputCard';
 import { SettingsInfoCard } from '~/components/SettingsInfoCard';
@@ -22,8 +23,11 @@ export default function HomePageContent() {
     totalNetIncomeInBaseCurrency,
     exchangeRates,
     exchangeRatesLoading,
+    totalNetTaxPercentage,
+    totalDeductibleExpensesPercentage
   } = useTaxesCalculator(snap);
 
+  // Regular accent color based on tax percentage
   const accentColor = totalTaxPercentage
     ? totalTaxPercentage > 100
       ? 'red'
@@ -31,6 +35,24 @@ export default function HomePageContent() {
       ? 'orange'
       : 'blue'
     : 'blue';
+    
+  // Check if expenses are greater than income
+  const expensesGreaterThanIncome = 
+    grossIncomeInBaseCurrency !== undefined && 
+    snap.deductibleExpenses !== undefined && 
+    snap.deductibleExpensesCurrency !== undefined && 
+    (snap.deductibleExpensesCurrency === 'RON' 
+      ? snap.deductibleExpenses > grossIncomeInBaseCurrency
+      : (snap.deductibleExpenses * (exchangeRates?.[snap.deductibleExpensesCurrency] || 0)) > grossIncomeInBaseCurrency);
+      
+  // Special accent color for IncomeDetailsCard when net income is negative
+  const incomeDetailsAccentColor = 
+    (totalNetIncomeInBaseCurrency !== undefined && totalNetIncomeInBaseCurrency < 0) || expensesGreaterThanIncome
+      ? 'red'
+      : accentColor;
+      
+  // Special accent color for DeductiveExpensesCard when expenses are greater than income
+  const deductiveExpensesAccentColor = expensesGreaterThanIncome ? 'red' : accentColor;
 
   const grossIncomeOverVATThreshold =
     grossIncomeInBaseCurrency !== undefined && grossIncomeInBaseCurrency > snap.vatThreshold;
@@ -47,12 +69,22 @@ export default function HomePageContent() {
         incomeTaxAmountInBaseCurrency={incomeTaxAmountInBaseCurrency}
         exchangeRatesLoading={exchangeRatesLoading}
       />
+
+      {totalDeductibleExpensesPercentage! > 0 ? (
+        <DeductiveExpensesCard
+          accentColor={deductiveExpensesAccentColor}
+          exchangeRatesLoading={exchangeRatesLoading}
+          totalDeductibleExpensesPercentage={totalDeductibleExpensesPercentage}
+          exchangeRates={exchangeRates}
+        />
+      ) : null}
+      
       <IncomeDetailsCard
-        accentColor={accentColor}
+        accentColor={incomeDetailsAccentColor}
         totalNetIncomeInBaseCurrency={totalNetIncomeInBaseCurrency}
         netIncome={netIncome}
         grossIncomeInBaseCurrency={grossIncomeInBaseCurrency}
-        totalTaxPercentage={totalTaxPercentage}
+        totalNetTaxPercentage={totalNetTaxPercentage}
         exchangeRatesLoading={exchangeRatesLoading}
       />
       <SettingsInfoCard
