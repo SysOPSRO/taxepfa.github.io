@@ -1,9 +1,33 @@
+version: "3.9"
 # Docker Compose for production static export served by Nginx
 services:
-  web:
+  taxepfa:
     build:
       context: .
       target: runner
-    ports:
-      - "8080:80"
+    image: sysopsro/taxepfa
+#    sysctls:
+#      - net.ipv6.conf.all.disable_ipv6=1
+#    ports:
+#      - "8080:80"
     restart: unless-stopped
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      # HTTP
+      - "traefik.http.routers.taxepfa.entrypoints=web"
+      - "traefik.http.routers.taxepfa.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.taxepfa.middlewares=taxepfa_https"
+      - "traefik.http.middlewares.taxepfa_https.redirectscheme.scheme=https"
+      # HTTPS
+      - "traefik.http.routers.taxepfa-https.entrypoints=websecure"
+      - "traefik.http.routers.taxepfa-https.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.taxepfa-https.tls=true"
+      - "traefik.http.routers.taxepfa-https.tls.certresolver=zerossl"
+      - "traefik.http.services.taxepfa-https.loadbalancer.server.port=80"
+
+networks:
+  traefik:
+    external: true
