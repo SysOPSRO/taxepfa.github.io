@@ -87,11 +87,14 @@ export function calculateTaxes({
 
   // calculate the total tax amount and percentage of the gross income
   const totalTaxAmountInBaseCurrency =
-    pensionTaxAmountInBaseCurrency + healthTaxAmountInBaseCurrency + incomeTaxAmountInBaseCurrency;
+  pensionTaxAmountInBaseCurrency + healthTaxAmountInBaseCurrency + incomeTaxAmountInBaseCurrency;
   const totalTaxPercentage = (totalTaxAmountInBaseCurrency / grossIncomeInBaseCurrency) * 100;
-
+  
   // calculate the total net income in base currency
-  const totalNetIncomeInBaseCurrency = grossIncomeInBaseCurrency - totalTaxAmountInBaseCurrency;
+  // based on tax amount and deductible expenses
+  const totalNetIncomeInBaseCurrency = grossIncomeInBaseCurrency - totalTaxAmountInBaseCurrency - deductibleExpenses;
+  const totalNetTaxPercentage = (totalNetIncomeInBaseCurrency / grossIncomeInBaseCurrency) * 100;
+  const totalDeductibleExpensesPercentage = (deductibleExpenses / grossIncomeInBaseCurrency) * 100;
 
   // convert the total net income to the income currency if needed and adjust it for the income interval
   let netIncome = totalNetIncomeInBaseCurrency;
@@ -104,6 +107,8 @@ export function calculateTaxes({
     grossIncomeInBaseCurrency,
     grossIncomeOverVATThreshold: grossIncomeInBaseCurrency > vatThreshold,
     totalNetIncomeInBaseCurrency,
+    totalNetTaxPercentage,
+    totalDeductibleExpensesPercentage,
     netIncome,
     totalTaxAmountInBaseCurrency,
     totalTaxPercentage,

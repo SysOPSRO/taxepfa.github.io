@@ -1,6 +1,6 @@
 import { MantineColor } from '@mantine/core';
 
-export const YEAR = 2024;
+export const YEAR = new Date().getFullYear();
 export const NEXT_YEAR = YEAR + 1;
 
 export const APP_URL = 'https://taxepfa.github.io';
