@@ -18,8 +18,9 @@ export type State = {
     companyIncomeTax: number;
     companyHighIncomeTax: number;
     companyProfitTax: number;
-    companyIncomeTaxThreshold: number;
+//    companyIncomeTaxThreshold: number;
     companyIncomeTaxToProfitThreshold: number;
+    type: string;
 };
 
 export const initialState: State = {
@@ -35,15 +36,15 @@ export const initialState: State = {
     deductibleExpensesInterval: 'monthly',
     minimumWage: 4_050,
     vatThreshold: 395_000,
-    dividendsTax: 0.10,
+    dividendsTax: 0.16,
     companyIncomeTax: 0.01,
     companyHighIncomeTax: 0.03,
     companyProfitTax: 0.16,
     // Values are in RON for 2024
-    companyIncomeTaxThreshold: 298_476,
-    // Values are in RON for 2024
-    companyIncomeTaxToProfitThreshold: 2_487_300
-
+    // companyIncomeTaxThreshold: 298_476,
+    // Values are in RON for 2026 - not really used for comparisons yet !
+    companyIncomeTaxToProfitThreshold: 509_850,
+    type: 'pfa' as 'pfa' | 'srl-venit' | 'srl-profit'
 };
 
 export const state = proxy<State>(initialState);

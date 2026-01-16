@@ -17,20 +17,20 @@ export default function HomePageContent() {
     const srlVenit = useTaxesCalculator({...snap, type: 'srl-venit'});
     const srlProfit = useTaxesCalculator({...snap, type: 'srl-profit'});
 
-  const {
-    grossIncomeInBaseCurrency,
-    totalTaxAmountInBaseCurrency,
-    totalTaxPercentage,
-    pensionTaxAmountInBaseCurrency,
-    healthTaxAmountInBaseCurrency,
-    incomeTaxAmountInBaseCurrency,
-    netIncome,
-    totalNetIncomeInBaseCurrency,
-    exchangeRates,
-    exchangeRatesLoading,
-    totalNetTaxPercentage,
-    totalDeductibleExpensesPercentage
-  } = useTaxesCalculator(snap);
+  // const {
+  //   grossIncomeInBaseCurrency,
+  //   totalTaxAmountInBaseCurrency,
+  //   totalTaxPercentage,
+  //   pensionTaxAmountInBaseCurrency,
+  //   healthTaxAmountInBaseCurrency,
+  //   incomeTaxAmountInBaseCurrency,
+  //   netIncome,
+  //   totalNetIncomeInBaseCurrency,
+  //   exchangeRates,
+  //   exchangeRatesLoading,
+  //   totalNetTaxPercentage,
+  //   totalDeductibleExpensesPercentage
+  // } = useTaxesCalculator(snap);
 
     // Regular accent color based on tax percentage
   const accentColor = pfa.totalTaxPercentage
@@ -41,18 +41,18 @@ export default function HomePageContent() {
                 : 'blue'
         : 'blue';
     
-  // Check if expenses are greater than income
+  // Check if expenses are greater than income - only for pfa now.
   const expensesGreaterThanIncome = 
-    grossIncomeInBaseCurrency !== undefined && 
+    pfa.grossIncomeInBaseCurrency !== undefined && 
     snap.deductibleExpenses !== undefined && 
     snap.deductibleExpensesCurrency !== undefined && 
     (snap.deductibleExpensesCurrency === 'RON' 
-      ? snap.deductibleExpenses > grossIncomeInBaseCurrency
-      : (snap.deductibleExpenses * (exchangeRates?.[snap.deductibleExpensesCurrency] || 0)) > grossIncomeInBaseCurrency);
+      ? snap.deductibleExpenses > pfa.grossIncomeInBaseCurrency
+      : (snap.deductibleExpenses * (pfa.exchangeRates?.[snap.deductibleExpensesCurrency] || 0)) > pfa.grossIncomeInBaseCurrency);
       
   // Special accent color for IncomeDetailsCard when net income is negative
   const incomeDetailsAccentColor = 
-    (totalNetIncomeInBaseCurrency !== undefined && totalNetIncomeInBaseCurrency < 0) || expensesGreaterThanIncome
+    (pfa.totalNetIncomeInBaseCurrency !== undefined && pfa.totalNetIncomeInBaseCurrency < 0) || expensesGreaterThanIncome
       ? 'red'
       : accentColor;
       
@@ -66,6 +66,20 @@ export default function HomePageContent() {
         <>
             <InputCard grossIncomeOverVATThreshold={grossIncomeOverVATThreshold}/>
             <Card withBorder p="md" radius="md" pos="relative">
+
+
+                <Text fw={700} fz={24} lh={1.25} mt={{base: 'xs', xs: 'md'}} ta={"center"}>
+                    Cheltuieli deductibile
+                </Text>
+                {pfa.totalDeductibleExpensesPercentage! > 0 ? (
+                  <DeductiveExpensesCard
+                    accentColor={deductiveExpensesAccentColor}
+                    exchangeRatesLoading={pfa.exchangeRatesLoading}
+                    totalDeductibleExpensesPercentage={pfa.totalDeductibleExpensesPercentage}
+                    exchangeRates={pfa.exchangeRates}
+                  />
+                ) : null}
+
                 <Text fw={700} fz={24} lh={1.25} mt={{base: 'xs', xs: 'md'}} ta={"center"}>
                     Taxe PFA
                 </Text>
@@ -83,7 +97,7 @@ export default function HomePageContent() {
                     totalNetIncomeInBaseCurrency={pfa.totalNetIncomeInBaseCurrency}
                     netIncome={pfa.netIncome}
                     grossIncomeInBaseCurrency={pfa.grossIncomeInBaseCurrency}
-                    totalTaxPercentage={pfa.totalTaxPercentage}
+                    totalNetTaxPercentage={pfa.totalNetTaxPercentage}
                     exchangeRatesLoading={pfa.exchangeRatesLoading}
                 />
             </Card>
@@ -106,7 +120,7 @@ export default function HomePageContent() {
                     totalNetIncomeInBaseCurrency={srlVenit.totalNetIncomeInBaseCurrency}
                     netIncome={srlVenit.netIncome}
                     grossIncomeInBaseCurrency={srlVenit.grossIncomeInBaseCurrency}
-                    totalTaxPercentage={srlVenit.totalTaxPercentage}
+                    totalNetTaxPercentage={srlVenit.totalNetTaxPercentage}
                     exchangeRatesLoading={srlVenit.exchangeRatesLoading}
                 />
             </Card>
@@ -123,15 +137,6 @@ export default function HomePageContent() {
                     incomeTaxAmountInBaseCurrency={srlProfit.incomeTaxAmountInBaseCurrency}
                     exchangeRatesLoading={srlProfit.exchangeRatesLoading}
                 />
-          
-      {totalDeductibleExpensesPercentage! > 0 ? (
-        <DeductiveExpensesCard
-          accentColor={deductiveExpensesAccentColor}
-          exchangeRatesLoading={exchangeRatesLoading}
-          totalDeductibleExpensesPercentage={totalDeductibleExpensesPercentage}
-          exchangeRates={exchangeRates}
-        />
-      ) : null}
       
       <IncomeDetailsCard
                     accentColor={incomeDetailsAccentColor}

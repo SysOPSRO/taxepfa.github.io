@@ -16,7 +16,7 @@ import { useTaxesChart } from '~/lib/taxes';
 export default function ChartPageContent() {
   const snap = useSnapshot(state);
   const { data, grossIncomeOverVATThreshold, totalTaxPercentage, exchangeRates, exchangeRatesLoading } =
-    useTaxesChart(snap) || {};
+    useTaxesChart({ ...snap, type: 'pfa' }) || {};
 
   const { ref: cardRef, width: cardWidth } = useElementSize();
   const { colors } = useMantineTheme();

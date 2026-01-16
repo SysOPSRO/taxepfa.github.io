@@ -30,24 +30,24 @@ function calculatePensionTaxAmount(income: number, minimumWage: number, isPfaInc
 }
 
 // maybe use it in future to clean code ?
-function calculateHealthTaxAmount(income: number, minimumWage: number, isPfaIncome = true) {
-    if (income >= minimumWage * 60 && isPfaIncome) {
-        return minimumWage * 60 * HEALTH_PERCENTAGE;
-    }
-    if (income >= minimumWage * 6 && isPfaIncome) {
-        return income * HEALTH_PERCENTAGE;
-    }
-    if (income >= minimumWage * 24 && !isPfaIncome) {
-        return minimumWage * 24 * HEALTH_PERCENTAGE;
-    }
-    if (income >= minimumWage * 12 && !isPfaIncome) {
-        return minimumWage * 12 * HEALTH_PERCENTAGE;
-    }
-    if (income >= minimumWage * 6) {
-        return minimumWage * 6 * HEALTH_PERCENTAGE;
-    }
-    return 0;
-}
+// function calculateHealthTaxAmount(income: number, minimumWage: number, isPfaIncome = true) {
+//     if (income >= minimumWage * 60 && isPfaIncome) {
+//         return minimumWage * 60 * HEALTH_PERCENTAGE;
+//     }
+//     if (income >= minimumWage * 6 && isPfaIncome) {
+//         return income * HEALTH_PERCENTAGE;
+//     }
+//     if (income >= minimumWage * 24 && !isPfaIncome) {
+//         return minimumWage * 24 * HEALTH_PERCENTAGE;
+//     }
+//     if (income >= minimumWage * 12 && !isPfaIncome) {
+//         return minimumWage * 12 * HEALTH_PERCENTAGE;
+//     }
+//     if (income >= minimumWage * 6) {
+//         return minimumWage * 6 * HEALTH_PERCENTAGE;
+//     }
+//     return 0;
+// }
 
 function calculateTotalIncome(incomeInterval: "hourly" | "daily" | "monthly" | "yearly", income: number, workingHoursPerWeek: number, vacationWeeksPerYear: number, workingDaysPerWeek: number) {
     if (incomeInterval === 'hourly') {
@@ -91,10 +91,10 @@ export function calculateTaxes({
                                    minimumWageTaxFreeDeductible,
                                    vatThreshold,
                                    dividendsTax,
-                                   companyIncomeTax,
+//                                   companyIncomeTax,
                                    companyHighIncomeTax,
                                    companyProfitTax,
-                                   companyIncomeTaxThreshold,
+//                                   companyIncomeTaxThreshold,
                                    exchangeRates,
                                    type,
                                }: State & {
@@ -151,7 +151,6 @@ export function calculateTaxes({
             const companyIncomeTaxedDividendTax = companyIncomeTaxedProfits * dividendsTax;
             income = companyIncomeTaxedProfits - companyIncomeTaxedDividendTax;
             companyTaxes = companyIncomeTaxedTaxes + companyIncomeTaxedDividendTax;
-
 
         }
         if (type === 'srl-profit') {
