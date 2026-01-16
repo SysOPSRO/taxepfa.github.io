@@ -29,7 +29,7 @@ export function IncomeDetailsCard({
 
 
   return (
-			<Card withBorder p="md" radius="md" pos="relative">
+			<Card p="md" radius="md" pos="relative">
 				<Flex
 					direction={{ base: "column", xs: "row" }}
 					align={{ base: "center", xs: "flex-start" }}
